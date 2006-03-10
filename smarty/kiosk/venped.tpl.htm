@@ -1,0 +1,565 @@
+{* Smarty | Confiance Brindes :: Venda Pedido *}
+
+<script>
+function select_cliente()
+{literal}{{/literal}
+  si=window.document.{$VIEW}.clientes.selectedIndex;
+  parent_form_field('__cliente',window.document.{$VIEW}.clientes[si].text,'venped');
+  parent_form_field('__id_cliente',window.document.{$VIEW}.clientes[si].value,'venped');
+  closemeplease('pedcli','{$VIEW}');
+{literal}}{/literal}
+</script>
+
+{if $ACTION != "email" && $ACTION != "produtos" && $ACTION != "clientes" && $ACTION != "tab"}
+
+{assign var="tabl_width" value="650"}
+{assign var="colA_width" value="100"}
+{assign var="colB_width" value="225"}
+
+<script> {literal}
+////wlp=recognizeWinLIKE_(parent);
+////wid=wlp.WinLIKE.searchwindow('venorc');
+////wlp.WinLIKE.windows[wid].Ttl='Vendas - Pedidos';
+////wlp.WinLIKE.windows[wid].draw();
+////wlp.WinLIKE.windows[wid].front();
+
+wlp=recognizeWinLIKE_(parent);
+wid=wlp.WinLIKE.searchwindow('venped');
+wlp.WinLIKE.windows[wid].draw();
+wlp.WinLIKE.windows[wid].front();
+
+{/literal} </script>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td>
+{bigbutton width="75" height="60" image="./images/PostItNotes.gif" label="LISTAR" link="$S_BASE_URL&action=listar"}
+</td>
+
+{if $A_PEDIDOS}
+  <td>
+  {bigbutton width="75" height="60" image="./images/print3.gif" label="TABELA" onclick="new_popup('Tabela de Pedidos','pedtab','$S_BASE_URL&action=tab&tmp_id=$TMP_ID',60,115,690,480)"}
+  </td>
+{/if}
+
+{if $ACTION != "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/Binoculars.gif" label="PESQUISAR" link="$S_BASE_URL&action=pesquisar"}
+  </td>
+{/if}
+
+{if $ACTION == "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/TelescopeRefracting.gif" label="BUSCAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+{/if}
+
+{if $ACTION == "alterar"}
+  {if $A_PEDIDO.entregue|upper != "S"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/ZIPBlue.gif" label="GRAVAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+  {/if}
+  <td>
+  {bigbutton width="75" height="60" image="./images/cadprd.gif" label="PRODUTOS" onclick="new_popup('Produtos','pedprd','$S_BASE_URL&action=produtos&tmp_id=$TMP_ID',60,115,700,400)"}
+  </td>
+  {if $ACTION == "alterar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/Mail.gif" label="EMAIL" onclick="new_popup('Pedido - Enviar por email','pedeml','$S_BASE_URL&action=email&tmp_id=$TMP_ID',60,100,640,420)"}
+  </td>
+  {/if}
+{/if}
+
+{if $ACTION == "alterar"}
+  {if $A_PEDIDO.entregue|upper != "S"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/RubyTrashEmpty.gif" label="REMOVER" onclick="redir_confirm('REMOVER O REGISTRO?','$S_BASE_URL&id_pedido=`$A_PEDIDO.id_pedido`&action=remover')"}
+  </td>
+  {/if}
+{/if}
+
+</tr>
+</table>
+
+{else}
+
+{assign var="tabl_width" value="580"}
+{assign var="colA_width" value="100"}
+{assign var="colB_width" value="190"}
+
+{/if}
+
+<table border=0 celpadding=0 celspacing=0>
+  <tr><td>
+
+{if $ACTION == "alterar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  {if $A_PEDIDO.entregue|upper == "S"}
+  <font class=textoform color="red">
+  &nbsp;(Este pedido já foi entregue e não pode ser alterado.)
+  </font>
+  {else}
+  <b class=title>&nbsp;{$ACTION|upper} PEDIDO</b>
+  {/if}
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="__pedido[id_usuario]" value="{$USERID}">
+  <input type="hidden" name="__pedido[id_empresa]" value="{$STOREID}">
+  <input type="hidden" name="pedido[id_orcamento]" value="{$A_PEDIDO.id_orcamento}">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="__id_pedido" value="{$A_PEDIDO.id_pedido}" class=campoformpeq disabled>
+  <input type="hidden" name="pedido[id_pedido]" value="{$A_PEDIDO.id_pedido}">
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cliente</td>
+  <td>
+  <input width={$colA_width} type="text" name="__cliente" value="{$A_CLIENTE.fantasia}" class=campoformgde disabled>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Vendedor</td>
+  <td>
+    <select name="pedido[id_usuario]" {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_USUARIOS key=key item=item}
+    <option value="{$key}" {if $A_PEDIDO.id_usuario == $key}selected{/if}>{$item}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Mídia</td>
+  <td>
+    <select name="pedido[id_midia]" {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_MIDIAS key=key item=item}
+    <option value="{$item.id_midia}" {if $A_PEDIDO.id_midia == $item.id_midia}selected{/if}>{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cond. Pagto.</td>
+  <td>
+    <select name="pedido[id_cond_pagto]" {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_COND_PAGTO key=key item=item}
+    <option value="{$item.id_cond_pagto}" {if $A_PEDIDO.id_cond_pagto == $item.id_cond_pagto}selected{/if}>{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Dt. Emissão</td>
+  <td>
+  <input type="text" name="pedido[dt_emissao]" value="{if $smarty.get.pedido.dt_emissao}{$smarty.get.pedido.dt_emissao}{else}{br_format input=$A_PEDIDO.dt_emissao format='date'}{/if}" class=campoformpeq {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Prazo Entrega</td>
+  <td class=textoform>
+  <input type="text" name="pedido[prazo_entrega]" value="{$A_PEDIDO.prazo_entrega}" class=campoformpeq {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+
+  <tr>
+  <td colspan=2>
+  <table cellpadding=0 cellspacing=0 border=0>
+  <tr>
+  <td class=textoform width={$colA_width}>Custo Fotolito</td>
+  <td width=90> <input type="text" name="pedido[custo_base]" value="{br_format input=$A_PEDIDO.custo_base format='money'}" class=campoformpeq  OnBlur="this.value=brfloat2usfloat(this.value);window.document.{$VIEW}.method='get';window.document.{$VIEW}.submit()" {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}></td>
+  <td class=textoform width=70> Gravação</td>
+  <td width=165>
+  <input type="text" name="pedido[gravacao]" value="{$A_PEDIDO.gravacao}" class=campoformmed {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+  </td>
+  <td class=textoform width=35> Cor</td>
+  <td>
+  <input type="text" name="pedido[cor]" value="{$A_PEDIDO.cor}" class=campoformmed {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+  </table>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Observação</td>
+  <td>
+  <textarea name="pedido[observacao]" {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>{$A_PEDIDO.observacao}</textarea>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Dt. Entrega</td>
+  <td>
+  <input type="text" name="_dt_entrega" value="{if $smarty.get.pedido._dt_entrega}{$smarty.get.pedido._dt_entrega}{else}{br_format input=$A_PEDIDO.dt_entrega format='date'}{/if}" class=campoformpeq {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Entregue?</td>
+  <td width={$colA_width} class=textoform>
+    <Table><tr><td class=textoform>
+    Sim<input type="radio" name="pedido[entregue]" value="S" {if $A_PEDIDO.entregue == "S"}checked{/if} {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>&nbsp;&nbsp;
+    </td><td class=textoform>
+    Não<input type="radio" name="pedido[entregue]" value="N" {if $A_PEDIDO.entregue == "N" || $A_PEDIDO.entregue == ""}checked{/if} {if $A_PEDIDO.entregue|upper == "S"}disabled{/if}>
+    </td>
+    </tr></table>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+{elseif $ACTION == "clientes"}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="clientes">
+
+  <table>
+    {if $A_CLIENTES}
+    <tr>
+      <td>
+      <select name="clientes">
+      {foreach from=$A_CLIENTES key=key item=item}
+      <option value="{$item.id_cliente}">{$item.fantasia}</option>
+      {/foreach}
+      </select>
+      </td>
+      <td>
+        <input type="button" value="selecionar" OnClick="select_cliente()" class=botaoform>
+      </td>
+    </tr>
+    {else}
+    <tr>
+      <td class=textoform>Código</td>
+      <td><input type="text" name="cliente[id_cliente]" class=campoformpeq></td>
+      <td class=textoform>Fantasia</td>
+      <td><input type="text" name="cliente[fantasia]" class=campoformgde></td>
+    <tr>
+      <td class=textoform>Razão Social</td>
+      <td colspan=3><input type="text" name="cliente[razao_social]" class=campoformgde></td>
+    </tr>
+    <tr>
+          <td colspan=4><input type="button" value="buscar" OnClick="window.document.{$VIEW}.submit()" class=botaoform></td>
+    </tr>
+    {/if}
+  </table>
+  </form>
+
+{elseif $ACTION == "produtos"}
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.request.tmp_id}">
+
+  {if $FORBID=="S"}
+  <font class=textoform color="red">
+  &nbsp;(A quantidade dos produtos não pode ser alterada. [BLOQUEADO])
+  </font>
+  {/if}
+
+  <table border=0 cellpadding=0 cellspacing=1 width=670>
+  <tr>
+  <td class=textoform bgcolor="#BBBBBB" align=center width=50><b>REF</b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center width=380><b>DESCRIÇÃO</b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center width=70><i>QTD.</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center width=70><b>VALOR UN.<b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center width=70><b>TOTAL<b></td>
+  <!--<td class=textoform bgcolor="#BBBBBB" align=center width=30><b>&nbsp;&nbsp;R&nbsp;</b></td> se permitir apagar o produto, vai acontecer de desincronizar o opv que vem do orcamento ... ehhh complicado :P-->
+  </tr>
+
+  {foreach from=$A_PEDIDO_PRODUTOS key=key item=item}
+  <tr>
+  <td class=textoform>
+  <input type="hidden" name="produto[{$key}][inf][id_produto]" value="{$item.inf.id_produto}">
+  <input type="hidden" name="produto[{$key}][inf][referencia]" value="{$item.inf.referencia}">
+  <input type="hidden" name="produto[{$key}][inf][ioc]" value="{$item.inf.ioc}">
+  <b>{$item.inf.referencia}&nbsp;</b>
+  </td>
+  <td class=mintextoform>{$item.inf.descricao}<input type="hidden" name="pedido[{$key}][inf][descricao]" value="{$item.inf.descricao}"></td>
+  <td><input type="text" name="produto[{$key}][quantidade]" value="{$item.quantidade}" class=campoformpeq OnBlur="window.document.{$VIEW}.submit()" {if $ENTREGUE=="S" || $FORBID=="S"}disabled{/if}></td>
+  <td><input type="text" name="produto[{$key}][venda_un]" value="{br_format input=$item.venda_un format='money'}" class=campoformpeq disabled></td>
+  <td><input type="text" name="produto[{$key}][total]" value="{br_format input=$item.total format='money'}" class=campoformpeq disabled></td>
+<!--  <td align=center><a href="{$S_BASE_URL}&action={$ACTION}&tmp_id={$smarty.request.tmp_id}&keydel={$key}"><img src="./images/close.gif" border=0></a></td>-->
+  </tr>
+  {/foreach}
+  </table>
+  </form>
+
+{elseif $ACTION == "email"}
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="email">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+
+  <table>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>De</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[from]" value="{$MAIL_DATA.EMAIL_VENDEDOR}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Para</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[to]" value="{$MAIL_DATA.EMAIL|lower}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>CC</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[cc]" value="" class=campoformgde>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Assunto</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[title]" value="Pedido" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td colspan=2 align=center>
+  <input type="button" value="visualizar" class=botaoform OnClick="new_popup('Pedido - Email','pedvem','{$S_BASE_URL}&action=viseml&tmp_id={$TMP_ID}',90,135,800,600)">
+  <input type="submit" value="enviar" class=botaoform OnClick="this.value='enviando'">
+  <input type="button" value="fechar" OnClick="closemeplease('pedeml','{$VIEW}')" class=botaoform>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+  {if $MAIL_DATA}
+
+  <table width=580 bgcolor=white border=0 class=textoform>
+  <tr>
+    <td colspan=2 bgcolor="#BBBBBB" class=title>RESUMO</td>
+  </tr>
+  <tr>
+    <td>Código do pedido</td>
+    <td>{$MAIL_DATA.ID}</td>
+  </tr>
+  <tr>
+    <td>Data da emissão</td>
+    <td>{$MAIL_DATA.DIA} de {$MAIL_DATA.MES} de {$MAIL_DATA.ANO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Fantasia</td>
+    <td>{$MAIL_DATA.FANTASIA}</td>
+  </tr>
+  <tr>
+    <td>Cliente - CNPJ/CPF</td>
+    {if $MAIL_DATA.CNPJ|count_characters == 14}
+    <td>{br_format input=$MAIL_DATA.CNPJ format='cnpj'}</td>
+    {elseif $MAIL_DATA.CNPJ|count_characters == 11}
+    <td>{br_format input=$MAIL_DATA.CNPJ format='cpf'}</td>
+    {else}
+    <td>{$MAIL_DATA.CNPJ}</td>
+    {/if}
+  </tr>
+  <tr>
+    <td>Cliente - IE/RG</td>
+    <td>{$MAIL_DATA.IE}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Endereço</td>
+    <td>{$MAIL_DATA.ENDERECO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Contato</td>
+    <td>{$MAIL_DATA.CONTATO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Telefone</td>
+    <td>{$MAIL_DATA.TEL}</td>
+  </tr>
+  <tr>
+    <td>Cliente - FAX</td>
+    <td>{$MAIL_DATA.FAX}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Email</td>
+    <td>{$MAIL_DATA.EMAIL}</td>
+  </tr>
+  <tr>
+    <td>Representante</td>
+    <td>{$MAIL_DATA.REPRESENTANTE}</td>
+  </tr>
+  <tr>
+    <td>Condição de Pagamento</td>
+    <td>{$MAIL_DATA.COND_PGTO}</td>
+  </tr>
+  <tr>
+    <td>Prazo de entrega</td>
+    <td>{$MAIL_DATA.PRAZO_ENTREGA|upper}</td>
+  </tr>
+  <tr>
+    <td>Valor do fotolito</td>
+    <td>{br_format input=$MAIL_DATA.FOTOLITO format='money'}</td>
+  </tr>
+  <tr>
+    <td>Vendedor</td>
+    <td>{$MAIL_DATA.VENDEDOR}</td>
+  </tr>
+
+  </table>
+
+  <table width=580 bgcolor=white border=1 class=textoform>
+  <tr class=a>
+    <td width=18 bgcolor="#BBBBBB" align=center>REF</td>
+    <td bgcolor="#BBBBBB" align=center>DESCRIÇÃO</td>
+    <td width=30 bgcolor="#BBBBBB" align=center>QUANTIDADE</td>
+    <td width=30 bgcolor="#BBBBBB" align=center>VALOR UN.</td>
+    <td width=30 bgcolor="#BBBBBB" align=center>TOTAL</td>
+  </tr>
+  {foreach from=$MAIL_DATA.TABELA item=item}
+  <tr class=b>
+    <td bgcolor="#BBBBBB">{$item.referencia}</td>
+    <td bgcolor=white>{$item.descricao}</td>
+    <td bgcolor=white>{$item.quantidade}</td>
+    <td bgcolor=white>{br_format input=$item.venda_un format='money'}</td>
+    <td bgcolor=white>{br_format input=$item.total format='money'}</td>
+  </tr>
+  {/foreach}
+  <tr class=b>
+    <td bgcolor="#BBBBBB" align=center colspan=2><b>TOTAL</b></td>
+    <td bgcolor="#BBBBBB">{$MAIL_DATA.TOTAL.quantidade}</td>
+    <td bgcolor="#BBBBBB"> - </td>
+    <td bgcolor="#BBBBBB">{br_format input=$MAIL_DATA.TOTAL.total format='money'}</td>
+  </tr>
+  </table>
+  {/if}
+
+{elseif $ACTION == "pesquisar" && $PEDIDOS_TOTAL == 0}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="buscar">
+
+  <table>
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="pedido[id_pedido]" value="{$A_PEDIDO.id_pedido}" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cliente</td>
+  <td>
+  <input width={$colA_width} type="text" name="__cliente" value="" class=campoformgde disabled>
+  <a href="javascript:new_popup('Clientes','pedcli','{$S_BASE_URL}&action=clientes',80,125,680,150)"><img src="./images/nav_next.gif" border=0></a>
+  <input width={$colB_width} type="hidden" name="__id_cliente" value="">
+  </td>
+  </tr>
+  
+
+  <tr>
+  <td class=textoform>Vendedor</td>
+  <td>
+    <select name="pedido[id_usuario]">
+    <option></option>
+    {foreach from=$A_USUARIOS key=key item=item}
+    <option value="{$key}">{$item}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Dt. Emissão &nbsp;&nbsp;&nbsp;&nbsp;DE</td>
+  <td class=textoform>
+  <input type="text" name="pedido[dt_emissao]" value="" class=campoformpeq> ATE <input type="text" name="pedido[dt_emissao_ate]" value="{php}echo date('d/m/Y'){/php}" class=campoformpeq>
+  </td>
+  </tr>
+  
+  <tr>
+  <td class=textoform>Dt. Entrega</td>
+  <td>
+  <input type="text" name="pedido[dt_entrega]" value="" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Observação</td>
+  <td>
+  <textarea name="pedido[observacao]"></textarea>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Entregue?</td>
+  <td width={$colA_width} class=textoform>
+    <Table><tr><td class=textoform>
+    Sim<input type="radio" name="pedido[entregue]" value="S">&nbsp;&nbsp;
+    </td><td class=textoform>
+    Não<input type="radio" name="pedido[entregue]" value="N">
+    </td>
+    </tr></table>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "listar" || $ACTION == "buscar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper} PEDIDO</b>
+  {if $PEDIDOS_TOTAL > 15}{include file="_pager.tpl.htm"}{/if}
+  </td>
+  </tr>
+  </table>
+
+  {if $PEDIDOS_TOTAL > 0}
+    {excel_table width="120,240,80,80,80" field="id_pedido,_cliente_fantasia,dt_emissao,dt_entrega,entregue" alias="ID,Cliente,DT.Emissão,DT.Entrega,Entregue" editfield="id_pedido" editlink="$S_BASE_URL&action=alterar" loop=$A_PEDIDOS}
+  {else}
+    <p class=textoform>Nenhum registro encontrado</p>
+  {/if}
+
+{elseif $ACTION == "tab"}
+
+  {$PEDTABLE}
+
+{/if}
+
+</td>
+</tr>
+</table>

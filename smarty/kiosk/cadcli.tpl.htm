@@ -1,0 +1,318 @@
+{* Smarty | Confiance Brindes :: Cadastro de Cliente *}
+
+{assign var="tabl_width" value="650"}
+{assign var="colA_width" value="100"}
+{assign var="colB_width" value="250"}
+
+{assign var="USERID" value="1001"}
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td>
+{bigbutton width="75" height="60" image="./images/doc02.gif" label="CRIAR" link="$S_BASE_URL&action=criar"}
+</td>
+<td>
+{bigbutton width="75" height="60" image="./images/PostItNotes.gif" label="LISTAR" link="$S_BASE_URL&action=listar"}
+</td>
+
+{if $ACTION != "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/Binoculars.gif" label="PESQUISAR" link="$S_BASE_URL&action=pesquisar"}
+  </td>
+{/if}
+
+{if $ACTION == "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/TelescopeRefracting.gif" label="BUSCAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+{/if}
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/ZIPBlue.gif" label="GRAVAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+{/if}
+
+{if $ACTION == "alterar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/RubyTrashEmpty.gif" label="REMOVER" onclick="redir_confirm('REMOVER O REGISTRO?','$S_BASE_URL&id_cliente=`$A_CLIENTE.id_cliente`&action=remover')"}
+  </td>
+{/if}
+
+</tr>
+</table>
+
+<table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  {if $CLIENTES_TOTAL > 15}{include file="_pager.tpl.htm"}{/if}
+  </td>
+  </tr>
+  <tr>
+  <td>
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="cliente[id_usuario]" value="{$USERID}">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  {if $A_CLIENTE.id_cliente}
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="__cliente[id_cliente]" value="{$A_CLIENTE.id_cliente}" class=campoformpeq disabled>
+  <input type="hidden" name="cliente[id_cliente]" value="{$A_CLIENTE.id_cliente}">
+  </td>
+  </tr>
+  {/if}
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Fantasia</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[fantasia]" value="{$A_CLIENTE.fantasia}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Email</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[email]" value="{$A_CLIENTE.email}" class=campoformgde>
+  {if $A_CLIENTE.email}
+  <a href="mailto:{$A_CLIENTE.email|lower}"><img src="./images/f_norm.gif" border=0></a>
+  {/if}
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Razão Social</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[razao_social]" value="{$A_CLIENTE.razao_social}" class=campoformgde>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Endereço</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[endereco]" value="{$A_CLIENTE.endereco}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Bairro</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[bairro]" value="{$A_CLIENTE.bairro}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Cidade</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[cidade]" value="{$A_CLIENTE.cidade}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Estado</td>
+  <td width={$colB_width}>
+  <select name="cliente[uf]">
+  {html_options options=$A_UF selected=$A_CLIENTE.uf}
+  </select>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>CEP</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[cep]" value="{br_format input=$A_CLIENTE.cep format='cep'}" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>CNPJ/CPF</td>
+  <td width={$colB_width}>
+  {if $A_CLIENTE.cnpj_cpf|count_characters == 14}
+  <input type="text" name="cliente[cnpj_cpf]" value="{br_format input=$A_CLIENTE.cnpj_cpf format='cnpj'}" class=campoformmed>
+  {elseif $A_CLIENTE.cnpj_cpf|count_characters == 11}
+  <input type="text" name="cliente[cnpj_cpf]" value="{br_format input=$A_CLIENTE.cnpj_cpf format='cpf'}" class=campoformmed>
+  {else}
+  <input type="text" name="cliente[cnpj_cpf]" value="{$A_CLIENTE.cnpj_cpf}" class=campoformmed>
+  {/if}
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>IE/RG</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[ie_rg]" value="{$A_CLIENTE.ie_rg}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Telefone 1</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[telefone_1]" value="{$A_CLIENTE.telefone_1}" class=campoformmed>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Telefone 2</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[telefone_2]" value="{$A_CLIENTE.telefone_2}" class=campoformmed>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Telefone FAX</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[telefone_fax]" value="{$A_CLIENTE.telefone_fax}" class=campoformmed>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Contato</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[contato]" value="{$A_CLIENTE.contato}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Data Contato</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[dt_contato]" value="{br_format input=$A_CLIENTE.dt_contato format='date'}" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Representante</td>
+  <td>
+    <select name="cliente[id_usuario]">
+    <option></option>
+    {foreach from=$A_USUARIOS key=key item=item}
+    <option value="{$key}" {if $A_CLIENTE.id_usuario == $key}selected{/if}>{$item}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "pesquisar" && $COMPONENTES_TOTAL == 0}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="buscar">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[id_cliente]" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Fantasia</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[fantasia]" value="{$A_CLIENTE.fantasia}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Email</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[email]" value="{$A_CLIENTE.email}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Razão Social</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[razao_social]" value="{$A_CLIENTE.razao_social}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Endereço</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[endereco]" value="{$A_CLIENTE.endereco}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Cidade</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[cidade]" value="{$A_CLIENTE.cidade}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Estado</td>
+  <td width={$colB_width}>
+  <select name="cliente[uf]">
+  <option></option>
+  {html_options options=$A_UF selected=$A_CLIENTE.uf}
+  </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>CEP</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[cep]" value="{$A_CLIENTE.cep}" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>CNPJ</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[cgc]" value="{$A_CLIENTE.cgc}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Inscr. Estadual</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[inscr_estadual]" value="{$A_CLIENTE.inscr_estadual}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Contato</td>
+  <td width={$colB_width}>
+  <input type="text" name="cliente[contato]" value="{$A_CLIENTE.contato}" class=campoformmed>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Representante</td>
+  <td>
+    <select name="cliente[id_usuario]">
+    <option></option>
+    {foreach from=$A_USUARIOS key=key item=item}
+    <option value="{$key}">{$item}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "listar" || $ACTION == "buscar"}
+
+  {if $CLIENTES_TOTAL > 0}
+    {excel_table width="120,360,120" field="id_cliente,fantasia,dt_contato" alias="ID,Fantasia,Data Contato" editfield="id_cliente" editlink="$S_BASE_URL&action=alterar" loop=$A_CLIENTES}
+  {else}
+    <p class=textoform>Nenhum registro encontrado</p>
+  {/if}
+
+{/if}
+
+</td>
+</tr>
+</table>

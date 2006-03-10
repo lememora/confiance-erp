@@ -1,0 +1,435 @@
+{* Smarty | Confiance Brindes :: Cadastro de Produto *}
+
+{if $ACTION != "componente" &&
+    $ACTION != "custo"      &&
+    $ACTION != "ppv"        &&
+    $ACTION != "tab"}
+
+  <table border=0 cellpadding=2 cellspacing=2>
+  <tr>
+  <td>
+  {bigbutton width="75" height="60" image="./images/doc02.gif" label="CRIAR" link="$S_BASE_URL&action=criar"}
+  </td>
+
+  <td>
+  {bigbutton width="75" height="60" image="./images/PostItNotes.gif" label="LISTAR" link="$S_BASE_URL&action=listar"}
+  </td>
+  
+  <td>
+  {bigbutton width="75" height="60" image="./images/print3.gif" label="TABELA" onclick="new_popup('Tabela de Produtos','prdtab','$S_BASE_URL&action=tab&tmp_id=$TMP_ID',60,115,690,480)"}
+  </td>
+
+  {if $ACTION != "pesquisar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/Binoculars.gif" label="PESQUISAR" link="$S_BASE_URL&action=pesquisar"}
+    </td>
+  {/if}
+
+  {if $ACTION == "pesquisar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/TelescopeRefracting.gif" label="BUSCAR" onclick="window.document.$VIEW.submit()"}
+    </td>
+  {/if}
+
+  {if $ACTION == "criar" || $ACTION == "alterar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/ZIPBlue.gif" label="GRAVAR" onclick="window.document.$VIEW.submit()"}
+    </td>
+    <td>
+    {bigbutton width="75" height="60" image="./images/cadcmp.gif" label="COMPOS." onclick="new_popup('Produto - Composição','prdcmp','$S_BASE_URL&action=componente&tmp_id=$TMP_ID',60,110,500,450)"}
+    </td>
+    <td>
+    {bigbutton width="75" height="60" image="./images/cadcst.gif" label="CUSTOS" onclick="new_popup('Produto - Custo','prdcst','$S_BASE_URL&action=custo&tmp_id=$TMP_ID',60,110,460,350)"}
+    </td>
+    <td>
+    {bigbutton width="75" height="60" image="./images/calc.gif" label="PPV" onclick="new_popup('Produto - Percentual Venda','prdppv','$S_BASE_URL&action=ppv&tmp_id=$TMP_ID',60,115,350,310)"}
+    </td>
+  {/if}
+
+  {if $ACTION == "alterar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/RubyTrashEmpty.gif" label="REMOVER" onclick="redir_confirm('REMOVER O REGISTRO?','$S_BASE_URL&id_produto=`$A_PRODUTO.id_produto`&action=remover')"}
+    </td>
+  {/if}
+
+  </tr>
+  </table>
+
+{/if}
+
+<table border=0 celpadding=0 celspacing=0>
+  <tr><td>
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width=650>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+  {if $A_PRODUTO.id_produto}
+  <input type="hidden" name="produto[id_produto]" value="{$A_PRODUTO.id_produto}">
+  {/if}
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  {if $A_PRODUTO.id_produto}
+  <tr>
+  <td width=100 class=textoform>Código</td>
+  <td width=550>
+  <input type="text" name="__produto[id_produto]" value="{$A_PRODUTO.id_produto}" class=campoformpeq disabled>
+  </td>
+  </tr>
+  {/if}
+  
+  <tr>
+  <td width=100 class=textoform>Referência</td>
+  <td width=550>
+  <input type="text" name="produto[referencia]" value="{$A_PRODUTO.referencia}" class=campoformpeq>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Custo Base Un.</td>
+  <td width=550>
+  <input type="text" name="produto[custo_base]" value="{$A_PRODUTO.custo_base}" class=campoformpeq OnBlur="this.value=brfloat2usfloat(this.value);window.document.{$VIEW}.method='get';window.document.{$VIEW}.submit()">
+  </td>
+  </tr>
+
+  <tr>
+  <td width=100 class=textoform>Descrição</td>
+  <td width=550>
+  <input type="text" name="produto[descricao]" value="{$A_PRODUTO.descricao}" class=campoformgde>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Observação</td>
+  <td width=550>
+  <textarea name="produto[observacao]">{$A_PRODUTO.observacao}</textarea>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Estoque?</td>
+  <td width=225 class=textoform>
+  Sim <input type="radio" name="produto[controle_estoque]" value="S" {if $A_PRODUTO.controle_estoque == "S" || $A_PRODUTO.controle_estoque == ""}checked{/if}>&nbsp;&nbsp;
+  Não <input type="radio" name="produto[controle_estoque]" value="N" {if $A_PRODUTO.controle_estoque == "N"}checked{/if}>
+  </td>
+  <td width=100 class=textoform>Quantidade</td>
+  <td width=225>
+  <input type="text" name="produto[estoque]" value="{$A_PRODUTO.estoque}" class=campoformmed>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Unidade Medida</td>
+  <td width=550>
+  <select name="produto[un_medida]">
+  {html_options options=$A_UN_MEDIDA selected=$A_PRODUTO.un_medida}
+  </select>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "pesquisar" && $PRODUTOS_TOTAL == 0}
+
+  <table border=0 cellpadding=1 cellspacing=1 width=650>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="buscar">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+  <!--
+  <tr>
+  <td width=100 class=textoform>Código</td>
+  <td width=550>
+  <input type="text" name="produto[id_produto]" class=campoformpeq>
+  </td>
+  </tr>
+  -->
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Referência</td>
+  <td width=550>
+  <input type="text" name="produto[referencia]" class=campoformpeq>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Descrição</td>
+  <td width=550>
+  <input type="text" name="produto[descricao]" class=campoformgde>
+  </td>
+  </tr>
+
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width=100 class=textoform>Observação</td>
+  <td width=550>
+  <input type="text" name="produto[observacao]" class=campoformgde>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "listar" || $ACTION == "buscar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width=650>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  {if $PRODUTOS_TOTAL > 15}{include file="_pager.tpl.htm"}{/if}
+  </td>
+  </tr>
+  </table>
+
+  {if $PRODUTOS_TOTAL > 0}
+    {excel_table width="100,100,400" field="id_produto,referencia,descricao" alias="ID,Referência,Descrição" editfield="id_produto" editlink="$S_BASE_URL&action=alterar" loop=$A_PRODUTOS}
+  {else}
+    <p class=textoform>Nenhum registro encontrado</p>
+  {/if}
+
+{elseif $ACTION == "componente"}
+
+  <form name="{$VIEW}_2" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.get.tmp_id}">
+  <input type="hidden" name="_id" value="{$smarty.get.cmpalt}">
+
+  {if $smarty.get.cmpalt || $smarty.get.novocmp}
+  
+  <table border=0 cellpadding=2 cellspacing=2 width=460>
+    <tr>
+    <td width=20><hr width=20 color="black"></td>
+    {if $A_COMPONENTE}
+    <td class=textoform><b>Alterar</b></td>
+    {else}
+    <td class=textoform><b>Novo</b></td>
+    {/if}
+    <td width="100%"><hr color="black"></td>
+    </tr>
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0 width=460>
+    <tr>
+    <td width=100 class=textoform>Nome</td>
+    <td>
+    <input type="hidden" name="componente[quantidade]" value="{if $A_COMPONENTE.quantidade > 0}{$A_COMPONENTE.quantidade}{else}1{/if}">
+    <input type="text" name="componente[nome]" value="{$A_COMPONENTE.nome}" class=campoformgde>
+    </td>
+    </tr>
+    <tr>
+    <td width=100 height=25 valign=top class=textoform>Un. Medida</td>
+    <td width=360 height=25 valign=top class=textoform>
+      <select name="componente[un_medida]">
+      {html_options options=$A_UN_MEDIDA selected=$A_COMPONENTE.un_medida}
+      </select>
+    </td>
+    </tr>
+  </table>
+  <table border=0 cellpadding=0 cellspacing=1>
+  <tr>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD. DE</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD. ATÉ</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>CUSTO UN.</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>EXISTE QTD MINIMA?</b></td>
+  </tr>
+  {foreach from=$A_TABELA key=key item=item}
+  <tr>
+  {if $item.id != ""}
+  <input type="hidden" name="tabela[{$key}][id]" value="{$item.id}">
+  {/if}
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][quantidade_de]" value="{$item.quantidade_de}" class=campoformpeq></td>
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][quantidade_ate]" value="{$item.quantidade_ate}" class=campoformpeq></td>
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][custo_un]" value="{$item.custo_un}" class=campoformpeq OnBlur="this.value=brfloat2usfloat(this.value)"></td>
+  <td bgcolor="#EEEEEE" align=center class=textoform>&nbsp;
+  Sim <input type="radio" name="tabela[{$key}][valor_max]" value="S" {if $item.valor_max == "S"}checked{/if}>&nbsp;&nbsp;
+  Não <input type="radio" name="tabela[{$key}][valor_max]" value="N" {if $item.valor_max == "N" || $item.valor_max == ""}checked{/if}>
+  </td>
+  </tr>
+  {/foreach}
+  <tr>
+  <td height=30 colspan=4 align=right>
+    {if $A_COMPONENTE}
+    <input type="submit" value="alterar" class=botaoform>
+    {else}
+    <input type="submit" value="adicionar" class=botaoform>
+    {/if}
+  </tr>
+  </table>
+  </form>
+  
+  {else}
+
+  <form name="{$VIEW}_3" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.get.tmp_id}">
+  
+  <table border=0 cellpadding=2 cellspacing=2 width=460>
+    <tr>
+    <td width=20><hr width=20 color="black"></td>
+    <td class=textoform><b>Componentes&nbsp;cadastrados</b></td>
+    <td width="100%"><hr color="black"></td>
+    </tr>
+  </table>
+  <table border=0 cellpadding=0 cellspacing=2 width=460>
+    <tr>
+    <td width=320 align=center bgcolor="#BBBBBB" class=textoform><b>NOME</b></td>
+    <td width=110 align=center bgcolor="#BBBBBB" class=textoform><b>QUANTIDADE</b></td>
+    <td width=20 align=center bgcolor="#BBBBBB" class=textoform><b>E</b></td>
+    <td width=20 align=center bgcolor="#BBBBBB" class=textoform><b>R</b></td>
+    </tr>
+    {foreach from=$A_PRODUTO_COMPONENTES key=key item=item}
+    <tr>
+    <td class=mintextoform>{$item.produto_componente.nome}</td>
+    <td class=mintextoform>
+    <input type="text" name="_prdcmp[{$key}][quantidade]" value="{$item.produto_componente.quantidade}" class=campoformmin OnBlur="window.document.{$VIEW}_3.submit()">
+    {if $item.produto_componente.un_medida}({$item.produto_componente.un_medida}){/if}
+    </td>
+    <td align=center>
+      <a href="{$S_BASE_URL}&action={$ACTION}&tmp_id={$smarty.get.tmp_id}&cmpalt=_{$key}"><img src="./images/_edit.gif" border=0></a>
+    </td>
+    <td align=center>
+      <a href="{$S_BASE_URL}&action={$ACTION}&tmp_id={$smarty.get.tmp_id}&cmpdel=_{$key}"><img src="./images/close.gif" border=0></a>
+    </td>
+    </tr>
+
+    {/foreach}
+    
+    <tr>
+      <td height=30 colspan=4 align=right>
+      <input type="submit" name="novocmp" value="novo" class=botaoform>
+      <input type="button" value="gravar" OnClick="window.document.{$VIEW}_2.submit();closemeplease('prdcmp','{$VIEW}')" class=botaoform>
+      </td>
+    </tr>
+    
+  </table>
+  </form>
+  
+  {/if}
+
+{elseif $ACTION == "custo"}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.get.tmp_id}">
+  
+  <table border=0 cellpadding=0 cellspacing=1>
+  <tr>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>NOME</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD.</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>CUSTO</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>INTERVALO</b></td>
+  </tr>
+  
+  {foreach from=$A_PRODUTO_CUSTOS key=key item=item}
+  <tr>
+  <td bgcolor="#EEEEEE" width="1">
+  {if $item.id}
+  <input type="hidden" name="custo[{$key}][id]" value="{$item.id}">
+  {/if}
+  <input type="text" name="custo[{$key}][nome]" value="{$item.nome}" class=campoformgde>
+  </td>
+  <td bgcolor="#EEEEEE" width="1"><input type="text" name="custo[{$key}][quantidade]" value="{$item.quantidade}" class=campoformpeq></td>
+  <td bgcolor="#EEEEEE" width="1"><input type="text" name="custo[{$key}][custo]" value="{$item.custo}" class=campoformpeq  OnBlur="this.value=brfloat2usfloat(this.value)"></td>
+  <td bgcolor="#EEEEEE" width="1"><input type="text" name="custo[{$key}][qtd_intervalo]" value="{if $item.qtd_intervalo == ''}0{else}{$item.qtd_intervalo}{/if}" class=campoformpeq OnBlur="if(this.value=='' || $this.value<0) {literal}{{/literal} this.value='0' {literal}}{/literal}"></td>
+  </tr>
+  {/foreach}
+
+  <tr>
+  <td colspan=4 align=right>
+    <input type="button" value="gravar" OnClick="window.document.{$VIEW}.submit();closemeplease('prdcst','{$VIEW}')" class=botaoform>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+{elseif $ACTION == "ppv"}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.get.tmp_id}">
+
+  <table border=0 cellpadding=0 cellspacing=1>
+
+  <tr>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD.</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>%</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>CUSTO UN.</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>TOTAL</b></td>
+  </tr>
+  
+  {foreach from=$PPV key=key item=item}
+  <tr>
+  {if $item.id}
+  <input type="hidden" name="ppv[{$key}][id]" value="{$item.id}">
+  {/if}
+  <td class=textoform>{$item.qtd_atacado}&nbsp;&nbsp;</td>
+  <td>
+  <input type="text" name="ppv[{$key}][percentual_venda]" value="{$item.percentual_venda}" class=campoformpeq OnBlur="this.value=brfloat2usfloat(this.value);window.document.{$VIEW}.submit()">
+  </td>
+  <td>
+  <input type="hidden" name="ppv[{$key}][qtd_atacado]" value="{$item.qtd_atacado}">
+  <input type="text" name="ppv[{$key}][venda_un]" value="{$item.venda_un}" class=campoformpeq disabled>
+  </td>
+  <td>
+  <input type="text" name="_total" value="{$item._total}" class=campoformpeq disabled>
+  </td>
+  </tr>
+  {/foreach}
+
+  <tr>
+  <td colspan=4 align=right>
+    <input type="button" value="gravar" OnClick="window.document.{$VIEW}.submit();closemeplease('prdppv','{$VIEW}')" class=botaoform>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+{elseif $ACTION == "tab"}
+  {$PRDTABLE}
+{/if}
+
+</td></tr>
+</table>

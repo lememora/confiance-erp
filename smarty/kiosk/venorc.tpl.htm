@@ -1,0 +1,671 @@
+{* Smarty | Confiance Brindes :: Venda Orçamento *}
+
+<script>
+function select_cliente()
+{literal}{{/literal}
+  si=window.document.{$VIEW}.clientes.selectedIndex;
+  parent_form_field('__cliente',window.document.{$VIEW}.clientes[si].text,'venorc');
+  parent_form_field('__id_cliente',window.document.{$VIEW}.clientes[si].value,'venorc');
+  closemeplease('orccli','{$VIEW}');
+{literal}}{/literal}
+</script>
+
+<script>
+function right_click_zero(_field)
+{literal}{{/literal}
+  if(window.event['shiftKey']) _field.value = "0";
+{literal}}{/literal}
+</script>
+
+{assign var="USERID" value="1001"}
+{assign var="STOREID" value="2002"}
+
+{if $ACTION != "clientes" &&
+    $ACTION != "produtos" &&
+    $ACTION != "email"    &&
+    $ACTION != "componentes" && $ACTION != "viseml"}
+
+<script> {literal}
+////wlp=recognizeWinLIKE_(parent);
+////wid=wlp.WinLIKE.searchwindow('venorc');
+////wlp.WinLIKE.windows[wid].Ttl='Vendas - Orçamentos';
+////wlp.WinLIKE.windows[wid].draw();
+////wlp.WinLIKE.windows[wid].front();
+{/literal} </script>
+
+{assign var="tabl_width" value="650"}
+{assign var="colA_width" value="100"}
+{assign var="colB_width" value="225"}
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td>
+{bigbutton width="75" height="60" image="./images/doc02.gif" label="CRIAR" link="$S_BASE_URL&action=criar"}
+</td>
+<td>
+{bigbutton width="75" height="60" image="./images/PostItNotes.gif" label="LISTAR" link="$S_BASE_URL&action=listar"}
+</td>
+
+{if $ACTION != "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/Binoculars.gif" label="PESQUISAR" link="$S_BASE_URL&action=pesquisar"}
+  </td>
+{/if}
+
+{if $ACTION == "pesquisar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/TelescopeRefracting.gif" label="BUSCAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+{/if}
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+  {if $A_ORCAMENTO.aprovado|upper != "S"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/ZIPBlue.gif" label="GRAVAR" onclick="window.document.$VIEW.submit()"}
+  </td>
+  {/if}
+  <td>
+  {bigbutton width="75" height="60" image="./images/cadprd.gif" label="PRODUTOS" onclick="new_popup('Produtos','orcprd','$S_BASE_URL&action=produtos&tmp_id=$TMP_ID',60,115,700,400)"}
+  </td>
+  {if $ACTION == "alterar"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/Mail.gif" label="EMAIL" onclick="new_popup('Orçamento - Enviar por email','orceml','$S_BASE_URL&action=email&tmp_id=$TMP_ID',60,100,640,420)"}
+  </td>
+  {/if}
+{/if}
+
+{if $ACTION == "alterar"}
+{if $A_ORCAMENTO.aprovado|upper != "S"}
+  <td>
+  {bigbutton width="75" height="60" image="./images/RubyTrashEmpty.gif" label="REMOVER" onclick="redir_confirm('REMOVER O REGISTRO?','$S_BASE_URL&id_orcamento=`$A_ORCAMENTO.id_orcamento`&action=remover')"}
+  </td>
+{/if}
+{/if}
+
+</tr>
+</table>
+
+{else}
+
+{assign var="tabl_width" value="580"}
+{assign var="colA_width" value="100"}
+{assign var="colB_width" value="190"}
+
+{/if}
+
+<table border=0 celpadding=0 celspacing=0>
+  <tr><td>
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  {if $A_ORCAMENTO.aprovado|upper == "S"}
+  <font class=textoform color="red">
+  &nbsp;(Este orçamento já foi aprovado e não pode ser alterado.
+  Clique <a href="{$S_BASE_URL}&action=gotoped&id_orcamento={$A_ORCAMENTO.id_orcamento}" target="venped"><b>aqui</b></a> para acessar o pedido correspondente.)
+  </font>
+  {else}
+  <b class=title>&nbsp;{$ACTION|upper} ORÇAMENTO</b>
+  {/if}
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="orcamento[id_usuario]" value="{$USERID}">
+  <input type="hidden" name="orcamento[id_empresa]" value="{$STOREID}">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  {if $A_ORCAMENTO.id_orcamento}
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="__orcamento[id_orcamento]" value="{$A_ORCAMENTO.id_orcamento}" class=campoformpeq disabled>
+  <input type="hidden" name="orcamento[id_orcamento]" value="{$A_ORCAMENTO.id_orcamento}">
+  </td>
+  </tr>
+  {/if}
+
+  <tr>
+  <td class=textoform>Cliente</td>
+  <td>
+  <input width={$colA_width} type="text" name="__cliente" value="{$A_CLIENTE.fantasia}" class=campoformgde disabled>
+  {if $A_ORCAMENTO.aprovado|upper != "S"}
+  <a href="javascript:new_popup('Clientes','orccli','{$S_BASE_URL}&action=clientes',80,125,680,150)"><img src="./images/nav_next.gif" border=0></a>
+  {/if}
+  <input width={$colB_width} type="hidden" name="__id_cliente" value="{$A_ORCAMENTO.id_cliente}">
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Representante</td>
+  <td>
+    <select name="orcamento[id_usuario]" {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_USUARIOS key=key item=item}
+    <option value="{$key}" {if $A_ORCAMENTO.id_usuario == $key}selected{/if}>{$item}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Mídia</td>
+  <td>
+    <select name="orcamento[id_midia]" {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_MIDIAS key=key item=item}
+    <option value="{$item.id_midia}" {if $A_ORCAMENTO.id_midia == $item.id_midia}selected{/if}>{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cond. Pagto.</td>
+  <td>
+    <select name="orcamento[id_cond_pagto]" {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+    <option></option>
+    {foreach from=$A_COND_PAGTO key=key item=item}
+    <option value="{$item.id_cond_pagto}" {if $A_ORCAMENTO.id_cond_pagto == $item.id_cond_pagto}selected{/if}>{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Dt. Emissão</td>
+  <td>
+  <input type="text" name="orcamento[dt_emissao]" value="{if $smarty.get.orcamento.dt_emissao}{$smarty.get.orcamento.dt_emissao}{else}{br_format input=$A_ORCAMENTO.dt_emissao format='date'}{/if}" class=campoformpeq {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Prazo Entrega</td>
+  <td class=textoform>
+  <input type="text" name="orcamento[prazo_entrega]" value="{$A_ORCAMENTO.prazo_entrega}" class=campoformpeq {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+
+  <tr>
+  <td colspan=2>
+  <table cellpadding=0 cellspacing=0 border=0>
+  <tr>
+  <td class=textoform width={$colA_width}>Custo Fotolito</td>
+  <td width=90> <input type="text" name="orcamento[custo_base]" value="{br_format input=$A_ORCAMENTO.custo_base format='money'}" class=campoformpeq {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}></td>
+  <td class=textoform width=70> Gravação</td>
+  <td width=165>
+  <input type="text" name="orcamento[gravacao]" value="{$A_ORCAMENTO.gravacao}" class=campoformmed {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+  </td>
+  <td class=textoform width=35> Cor</td>
+  <td>
+  <input type="text" name="orcamento[cor]" value="{$A_ORCAMENTO.cor}" class=campoformmed {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+  </td>
+  </tr>
+  </table>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Observação</td>
+  <td>
+  <textarea name="orcamento[observacao]" {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>{$A_ORCAMENTO.observacao}</textarea>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Aprovado?</td>
+  <td width={$colA_width} class=textoform>
+    <Table><tr><td class=textoform>
+    Sim<input type="radio" name="orcamento[aprovado]" value="S" {if $A_ORCAMENTO.aprovado != "S"}OnClick="alert('ATENÇÃO: Ao aprovar o orçamento, os valores não poderão mais ser alterados.')"{/if} {if $A_ORCAMENTO.aprovado == "S"}checked{/if} {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>&nbsp;&nbsp;
+    </td><td class=textoform>
+    Não<input type="radio" name="orcamento[aprovado]" value="N" {if $A_ORCAMENTO.aprovado == "N" || $A_ORCAMENTO.aprovado == ""}checked{/if} {if $A_ORCAMENTO.aprovado|upper == "S"}disabled{/if}>
+    </td>
+    </tr></table>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+{elseif $ACTION == "clientes"}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="clientes">
+  
+  <table>
+    {if $A_CLIENTES}
+    <tr>
+      <td>
+      <select name="clientes">
+      {foreach from=$A_CLIENTES key=key item=item}
+      <option value="{$item.id_cliente}">{$item.fantasia}</option>
+      {/foreach}
+      </select>
+      </td>
+      <td>
+        <input type="button" value="selecionar" OnClick="select_cliente()" class=botaoform>
+      </td>
+    </tr>
+    {else}
+    <tr>
+      <td class=textoform>Código</td>
+      <td><input type="text" name="cliente[id_cliente]" class=campoformpeq></td>
+      <td class=textoform>Fantasia</td>
+      <td><input type="text" name="cliente[fantasia]" class=campoformgde></td>
+    <tr>
+      <td class=textoform>Razão Social</td>
+      <td colspan=3><input type="text" name="cliente[razao_social]" class=campoformgde></td>
+    </tr>
+    <tr>
+          <td colspan=4><input type="button" value="buscar" OnClick="window.document.{$VIEW}.submit()" class=botaoform></td>
+    </tr>
+    {/if}
+  </table>
+  </form>
+
+{elseif $ACTION == "produtos"}
+
+  <form name="{$VIEW}" action="./index.php#rodape" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.request.tmp_id}">
+
+  <table border=0 cellpadding=0 cellspacing=1 width=670>
+  <tr>
+  <td class=textoform bgcolor="#BBBBBB" align=center><b>REF</b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center width="100%"><b>DESCRIÇÃO</b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>50</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>100</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>250</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>500</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>1000</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>2000</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>5000</i></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><i>10000</i></td>
+  {if $APROVADO != "S"}
+  <td class=textoform bgcolor="#BBBBBB" align=center><b>&nbsp;&nbsp;E&nbsp;</b></td>
+  <td class=textoform bgcolor="#BBBBBB" align=center><b>&nbsp;&nbsp;R&nbsp;</b></td>
+  {/if}
+  </tr>
+
+  {foreach from=$A_ORCAMENTO_PRODUTOS key=key item=item}
+  <tr>
+  <td class=textoform>
+  <input type="hidden" name="orcamento[{$key}][inf][id_produto]" value="{$item.inf.id_produto}">
+  <input type="hidden" name="orcamento[{$key}][inf][referencia]" value="{$item.inf.referencia}">
+  <b>{$item.inf.referencia}&nbsp;</b>
+  </td>
+<!--  <td><input type="text" name="orcamento[{$key}][inf][descricao]" value="{$item.inf.descricao}" class=campoformgde></td>-->
+  <td class=mintextoform>{$item.inf.descricao}<input type="hidden" name="orcamento[{$key}][inf][descricao]" value="{$item.inf.descricao}"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][50]" value="{br_format input=$item.qtd.50 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][100]" value="{br_format input=$item.qtd.100 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][250]" value="{br_format input=$item.qtd.250 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][500]" value="{br_format input=$item.qtd.500 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][1000]" value="{br_format input=$item.qtd.1000 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][2000]" value="{br_format input=$item.qtd.2000 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][5000]" value="{br_format input=$item.qtd.5000 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  <td><input type="text" name="orcamento[{$key}][qtd][10000]" value="{br_format input=$item.qtd.10000 format='money'}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()" {if $APROVADO == "S"}disabled{/if} OnMouseDown="right_click_zero(this)"></td>
+  {if $APROVADO != "S"}
+  <td width="100%" align=center><a href="javascript:new_popup('Orçamento Produto : Componentes e Custos','orcprdcmp','{$S_BASE_URL}&action=componentes&tmp_id={$smarty.request.tmp_id}&prdkey=_{$key}',185,200,500,280)"><img src="./images/_edit.gif" border=0></a></td>
+  <td width="100%" align=center><a href="{$S_BASE_URL}&action={$ACTION}&tmp_id={$smarty.request.tmp_id}&keydel={$key}"><img src="./images/close.gif" border=0></a></td>
+  {/if}
+  </tr>
+  {/foreach}
+
+  {if $APROVADO != "S"}
+  <tr>
+  <td colspan=2 align=left class=textoform>
+
+  <br>
+  <A NAME="rodape"></A>
+  <input type="text" name="orcamento[add][referencia]" value="" class=campoformmin OnKeyPress="kbdenter_submit(window.document.{$VIEW})"> (NOVO)
+  <script>
+  tam = window.document.{$VIEW}.elements.length;
+  window.document.{$VIEW}.elements[(tam - 1)].focus();
+  </script>
+  </td>
+  <td colspan=8 align=left class=textoform><br>
+  <input type="hidden" name="recalc" value="0">
+  <input type="button" value="recalcular" class=botaoform OnClick="window.document.{$VIEW}.recalc.value=1;window.document.{$VIEW}.submit()"></td>
+  </tr>
+  {/if}
+
+  </table>
+  </form>
+
+{elseif $ACTION == "componentes"}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$smarty.request.tmp_id}">
+  <input type="hidden" name="prdkey" value="{$smarty.request.prdkey}">
+
+  <table border=0 cellpadding=1 cellspacing=1 width=450>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$PRD_REFERENCIA} - {$PRD_DESCRICAO}</b>
+  </td>
+  </tr>
+  </table>
+
+  {if $PRD_CMP|count > 0}
+
+  <table border=0 cellpadding=0 cellspacing=2 width=450>
+    <tr>
+    <td width=320 align=center bgcolor="#BBBBBB" class=textoform><b>COMPONENTE</b></td>
+    <td width=110 align=center bgcolor="#BBBBBB" class=textoform><b>QUANTIDADE</b></td>
+    </tr>
+    {foreach from=$PRD_CMP key=key item=item}
+    <tr>
+    <td class=mintextoform>{$item.produto_componente.nome}</td>
+    <td class=mintextoform>
+    <input type="text" name="_prdcmp[{$key}][quantidade]" value="{$item.produto_componente.quantidade}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()">
+    {if $item.produto_componente.un_medida}({$item.produto_componente.un_medida}){/if}
+    </td>
+    </tr>
+    {/foreach}
+  </table>
+  {else}
+  Nenhum componente cadastrado
+  {/if}
+  
+  {if $PRD_CST|count > 0}
+  
+  <table border=0 cellpadding=0 cellspacing=2 width=450>
+    <tr>
+    <td width=320 align=center bgcolor="#BBBBBB" class=textoform><b>CUSTO</b></td>
+    <td width=110 align=center bgcolor="#BBBBBB" class=textoform><b>QUANTIDADE</b></td>
+    </tr>
+    {foreach from=$PRD_CST key=key item=item}
+    {if $item.custo > 0}
+    <tr>
+    <td class=mintextoform>{$item.nome}</td>
+    <td class=mintextoform>
+    <input type="text" name="_prdcst[{$key}][quantidade]" value="{$item.quantidade}" class=campoformmin OnBlur="window.document.{$VIEW}.submit()">
+    {if $item.un_medida}({$item.un_medida}){/if}
+    </td>
+    </tr>
+    {else}
+    <input type="hidden" name="_prdcst[{$key}][quantidade]" value="{$item.quantidade}">
+    {/if}
+    {/foreach}
+  </table>
+  {else}
+  Nenhum custo cadastrado
+  {/if}
+
+  </form>
+
+{elseif $ACTION == "email"}
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="email">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+
+  <table>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>De</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[from]" value="{$MAIL_DATA.EMAIL_VENDEDOR}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Para</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[to]" value="{$MAIL_DATA.EMAIL|lower}" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>CC</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[cc]" value="" class=campoformgde>
+  </td>
+  </tr>
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Assunto</td>
+  <td width={$colB_width}>
+  <input type="text" name="mail[title]" value="Orçamento" class=campoformgde>
+  </td>
+  </tr>
+
+  <tr>
+  <td colspan=2 align=center>
+  <input type="button" value="visualizar" class=botaoform OnClick="new_popup('Orçamento - Email','orcvem','{$S_BASE_URL}&action=viseml&tmp_id={$TMP_ID}',90,135,800,600)">
+  <input type="submit" value="enviar" class=botaoform OnClick="this.value='enviando'">
+  <input type="button" value="fechar" OnClick="closemeplease('orceml','{$VIEW}')" class=botaoform>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+  {if $MAIL_DATA}
+
+  <table width=580 bgcolor=white border=0 class=textoform>
+  <tr>
+    <td colspan=2 bgcolor="#BBBBBB" class=title>RESUMO</td>
+  </tr>
+  <tr>
+    <td>Código do orçamento</td>
+    <td>{$MAIL_DATA.ID}</td>
+  </tr>
+  <tr>
+    <td>Data da emissão</td>
+    <td>{$MAIL_DATA.DIA} de {$MAIL_DATA.MES} de {$MAIL_DATA.ANO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Fantasia</td>
+    <td>{$MAIL_DATA.FANTASIA}</td>
+  </tr>
+  <tr>
+    <td>Cliente - CNPJ/CPF</td>
+    {if $MAIL_DATA.CNPJ|count_characters == 14}
+    <td>{br_format input=$MAIL_DATA.CNPJ format='cnpj'}</td>
+    {elseif $MAIL_DATA.CNPJ|count_characters == 11}
+    <td>{br_format input=$MAIL_DATA.CNPJ format='cpf'}</td>
+    {else}
+    <td>{$MAIL_DATA.CNPJ}</td>
+    {/if}
+  </tr>
+  <tr>
+    <td>Cliente - IE/RG</td>
+    <td>{$MAIL_DATA.IE}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Endereço</td>
+    <td>{$MAIL_DATA.ENDERECO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Contato</td>
+    <td>{$MAIL_DATA.CONTATO}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Telefone</td>
+    <td>{$MAIL_DATA.TEL}</td>
+  </tr>
+  <tr>
+    <td>Cliente - FAX</td>
+    <td>{$MAIL_DATA.FAX}</td>
+  </tr>
+  <tr>
+    <td>Cliente - Email</td>
+    <td>{$MAIL_DATA.EMAIL}</td>
+  </tr>
+  <tr>
+    <td>Representante</td>
+    <td>{$MAIL_DATA.REPRESENTANTE}</td>
+  </tr>
+  <tr>
+    <td>Condição de Pagamento</td>
+    <td>{$MAIL_DATA.COND_PGTO}</td>
+  </tr>
+  <tr>
+    <td>Prazo de entrega</td>
+    <td>{$MAIL_DATA.PRAZO_ENTREGA|upper}</td>
+  </tr>
+  <tr>
+    <td>Valor do fotolito</td>
+    <td>{br_format input=$MAIL_DATA.FOTOLITO format='money'}</td>
+  </tr>
+  <tr>
+    <td>Vendedor</td>
+    <td>{$MAIL_DATA.VENDEDOR}</td>
+  </tr>
+  
+  </table>
+
+  <table width=580 bgcolor=white border=1 class=textoform>
+  <tr class=a>
+    <td width=18 bgcolor="#BBBBBB" align=center colspan=2>REF</td>
+    <td width=18 bgcolor="#BBBBBB" align=center colspan=2>DESCRIÇÃO</td>
+    <td width=18 bgcolor="#BBBBBB" align=center colspan=10>PREÇOS</td>
+  </tr>
+  <tr class=a>
+    <td bgcolor="#BBBBBB" colspan=4>&nbsp;</td>
+    <td bgcolor="#BBBBBB" align=center colspan=2>50</td>
+    <td bgcolor="#BBBBBB" align=center>100</td>
+    <td bgcolor="#BBBBBB" align=center>250</td>
+    <td bgcolor="#BBBBBB" align=center>500</td>
+    <td bgcolor="#BBBBBB" align=center>1000</td>
+    <td bgcolor="#BBBBBB" align=center>2000</td>
+    <td bgcolor="#BBBBBB" align=center>5000</td>
+    <td bgcolor="#BBBBBB" align=center>10000</td>
+  </tr>
+  {foreach from=$MAIL_DATA.TABELA item=item}
+  <tr class=b>
+    <td bgcolor="#BBBBBB" align=center colspan=2>{$item.referencia}</td>
+    <td bgcolor=white colspan=2>{$item.descricao}</td>
+    <td bgcolor=white align=center colspan=2>{if $item.valor.50 > 0}{br_format input=$item.valor.50 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.100 > 0}{br_format input=$item.valor.100 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.250 > 0}{br_format input=$item.valor.250 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.500 > 0}{br_format input=$item.valor.500 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.1000 > 0}{br_format input=$item.valor.1000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.2000 > 0}{br_format input=$item.valor.2000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.5000 > 0}{br_format input=$item.valor.5000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.10000 > 0}{br_format input=$item.valor.10000 format='money'}{else}-{/if}</td>
+  </tr>
+  {/foreach}
+  </table>
+  {/if}
+
+{elseif $ACTION == "pesquisar" && $COMPONENTES_TOTAL == 0}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  </td>
+  </tr>
+  </table>
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="buscar">
+
+  <table>
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="orcamento[id_orcamento]" value="{$A_ORCAMENTO.id_orcamento}" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cliente</td>
+  <td>
+  <input width={$colA_width} type="text" name="__cliente" value="" class=campoformgde disabled>
+  <a href="javascript:new_popup('Clientes','orccli','{$S_BASE_URL}&action=clientes',80,125,680,150)"><img src="./images/nav_next.gif" border=0></a>
+  <input width={$colB_width} type="hidden" name="__id_cliente" value="">
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Mídia</td>
+  <td>
+    <select name="orcamento[id_midia]">
+    <option></option>
+    {foreach from=$A_MIDIAS key=key item=item}
+    <option value="{$item.id_midia}">{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Cond. Pagto.</td>
+  <td>
+    <select name="orcamento[id_cond_pagto]">
+    <option></option>
+    {foreach from=$A_COND_PAGTO key=key item=item}
+    <option value="{$item.id_cond_pagto}">{$item.nome}</option>
+    {/foreach}
+    </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Dt. Emissão</td>
+  <td>
+  <input type="text" name="orcamento[dt_emissao]" value="" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td class=textoform>Observação</td>
+  <td>
+  <textarea name="orcamento[observacao]"></textarea>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Aprovado?</td>
+  <td width={$colA_width} class=textoform>
+    <Table><tr><td class=textoform>
+    Sim<input type="radio" name="orcamento[aprovado]" value="S">&nbsp;&nbsp;
+    </td><td class=textoform>
+    Não<input type="radio" name="orcamento[aprovado]" value="N">
+    </td>
+    </tr></table>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "viseml"}
+
+{elseif $ACTION == "listar" || $ACTION == "buscar"}
+
+  <table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper} ORÇAMENTO</b>
+  {if $ORCAMENTOS_TOTAL > 15}{include file="_pager.tpl.htm"}{/if}
+  </td>
+  </tr>
+  </table>
+
+  {if $ORCAMENTOS_TOTAL > 0}
+    {excel_table width="120,240,80,80,80" field="id_orcamento,_cliente_fantasia,dt_emissao,prazo_entrega,aprovado" alias="ID,Cliente,DT.Emissão,PZ.Entrega,Aprovado" editfield="id_orcamento" editlink="$S_BASE_URL&action=alterar" loop=$A_ORCAMENTOS}
+  {else}
+    <p class=textoform>Nenhum registro encontrado</p>
+  {/if}
+
+{/if}
+
+</td>
+</tr>
+</table>

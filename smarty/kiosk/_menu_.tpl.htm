@@ -1,0 +1,114 @@
+{* Smarty | Confiance Brindes :: Menú *}
+
+<STYLE> {literal}
+
+div
+{
+  font-family: tahoma
+}
+.clsCMOn
+{
+  font-size: 12px;
+  padding: 1px 3px;
+  color: black;
+  font-weight: bold
+}
+
+.clsCMOver
+{
+  font-size: 12px;
+  padding: 1px 3px;
+  color: black;
+  font-weight: bold
+}
+
+
+{/literal} </STYLE>
+
+<SCRIPT language="JavaScript" src="./coolmenu/coolmenu.js"></SCRIPT>
+<SCRIPT language="JavaScript"> {literal}
+
+function none() { } // FUNC. P/ LINKS NULOS
+
+/* Estilo */
+
+BLANK_IMAGE = 'images/pixel_trans.gif';
+
+var STYLE =
+{
+	border : 1,
+	shadow : 5,
+	color  : { border: "#000000", shadow: "#000000", bgON  : "#EEEEEE", bgOVER: "#BBBBBB" },
+	css    : { ON: "clsCMOn", OVER: "clsCMOver" }
+};
+
+var MENU_ITEMS = [
+
+/* Configuração */
+{
+  pos:[0,0],
+  itemoff:[0,190],
+  leveloff:[30,0],
+  style:STYLE,
+  size:[30,190]
+},
+
+
+{/literal}
+{* ========================================================
+ * ITENS DO MENU (GERADO PELO SMARTY). EXEMPLO:
+ * ========================================================
+ *
+ * {
+ *   code : "MENU1",
+ *   sub  : [
+ *     { itemoff : [30,0] },
+ *     { code    : "Item A", url: "#A", target: "targetA" },
+ *     { code    : "Item B", url: "#B", target: "targetB" }
+ *   ]
+ * },
+ *
+ * {
+ *   code : "MENU2",
+ *   sub  : [
+ *     { itemoff : [30,0] },
+ *     { code    : "Item X", url: "#X", target: "targetX" }
+ *   ]
+ * }
+ *
+ *}
+
+{foreach from=$A_VIEW_MENU key=s_menu item=a_view}
+
+  {literal} { {/literal}
+  code : "{$s_menu|upper}" ,
+  sub  : {literal} [ {itemoff:[30,0]} , {/literal}
+  
+  {section name=v loop=$a_view}
+  {assign var="s_view" value=$a_view[v]}
+  
+    {literal} { {/literal}
+    code   : "<img src='./images/{$s_view}.gif' width=20 height=20> {$A_VIEW[$s_view]}" ,
+    url    : "{$S_BASE_URL}{$s_view}" ,
+    target : "{$s_view}"
+    {literal} } {/literal}
+    {if $smarty.section.v.last == ""} , {/if}
+    
+  {/section}
+  ] {literal} } , {/literal}
+  
+{/foreach}
+{literal}
+
+{
+  code: "FERRAMENTAS", sub:[ { itemoff:[30,0] },
+  	{ code:"<img src='./images/Key.gif' width=20 height=20> Sair" , url: "javascript:alert('Para fechar, tecle ALT+F4')" },
+	]
+},
+
+
+];
+
+var m1 = new COOLjsMenu("menu1", MENU_ITEMS)
+
+{/literal} </SCRIPT>

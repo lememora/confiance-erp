@@ -1,0 +1,191 @@
+{* Smarty | Confiance Brindes :: Email - Orçamento/Pedido *}
+
+
+
+<html>
+<head>
+<style> {literal}
+.a { font-size: 8pt; font-family: sans-serif; color:black; font-weight: bold };
+.b { font-size: 8pt; font-family: sans-serif; color:black };
+.c { font-size: 7pt; font-family: sans-serif; color:black };
+table,tr,td { border-collapse: collapse; border: 1px solid black }
+{/literal} </style>
+</head>
+<body style='text-justify-trim:punctuation'>
+
+<span style='position:absolute;z-index:1;margin-left:550px;margin-top:10px;font-size:12.0pt;font-family:"Comic Sans MS";color:black'>
+<b>Nº {$ID}</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:210px;margin-top:50px;font-size:12.0pt;font-family:Arial;color:black'>
+<b>Telefax: 11 5573-3730</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:210px;margin-top:70px;font-size:9.0pt;font-family:Arial;color:black'>
+<b>www.confiancebrindes.com.br</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:130px;margin-top:89px;font-size:12.0pt;font-family:Arial;color:black'>
+<b>A maior variedade no mercado de brindes</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:190px;margin-top:110px;font-size:12.0pt;font-family:"Comic Sans MS";color:black'>
+<b>ORÇAMENTO/PEDIDO</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:440px;margin-top:115px;font-size:10.0pt;font-family:"Comic Sans MS";color:black'>
+<b>São Paulo, {$DIA} de {$MES} de {$ANO}</b>
+</span>
+
+<span style='position:absolute;z-index:1;margin-left:0px;margin-top:135px'>
+<table width="625" cellpadding=0 cellspacing=0>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>1</td>
+    <td bgcolor=white>&nbsp;Nome Fantasia .: {$FANTASIA}</td>
+    <td width=18 bgcolor=white align=center>2</td>
+
+    {if $CNPJ|count_characters == 14}
+    <td bgcolor=white>&nbsp;CNPJ .: {br_format input=$CNPJ format='cnpj'}</td>
+    {elseif $CNPJ|count_characters == 11}
+    <td bgcolor=white>&nbsp;CPF .: {br_format input=$CNPJ format='cpf'}</td>
+    {else}
+    <td bgcolor=white>&nbsp;CNPJ/CPF           .: {$CNPJ}</td>
+    {/if}
+    
+    <td width=18 bgcolor=white align=center>3</td>
+    <td bgcolor=white>&nbsp;IE .: {$IE}</td>
+  </tr>
+  
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>&nbsp;</td>
+    <td bgcolor=white colspan=1>&nbsp;Razão Social .: {$RAZAO_SOCIAL}</td>
+    <td width=18 bgcolor=white align=center>&nbsp;</td>
+    <td bgcolor=white colspan=3>&nbsp;CEP .: {br_format input=$CEP format='cep'}</td>
+  </tr>
+  
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>4</td>
+    <td bgcolor=white colspan=5>&nbsp;Endereço .: {$ENDERECO}</td>
+  </tr>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>5</td>
+    <td bgcolor=white>&nbsp;Contato .: {$CONTATO}</td>
+    <td width=18 bgcolor=white align=center>6</td>
+    <td bgcolor=white>&nbsp;Tel .: {$TEL}</td>
+    <td width=18 bgcolor=white align=center>7</td>
+    <td bgcolor=white>&nbsp;FAX .: {$FAX}</td>
+  </tr>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>8</td>
+    <td bgcolor=white>&nbsp;Email .: {$EMAIL}</td>
+    <td width=18 bgcolor=white align=center>9</td>
+    <td bgcolor=white colspan=3>&nbsp;Representante .: {$REPRESENTANTE}</td>
+  </tr>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>10</td>
+    <td bgcolor=white>&nbsp;Observações :</td>
+    <td bgcolor=white colspan=4 rowspan=2>&nbsp;</td>
+  </tr>
+  <tr class=a>
+    <td bgcolor=white>&nbsp;</td>
+    <td bgcolor=white colspan=4>&nbsp;{$OBSERVACAO}</td>
+  </tr>
+</table>
+<table width=0 height=3 cellspacing=0 cellpadding=0><tr><td></td></tr></table>
+<table width="625" cellpadding=0 cellspacing=0>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>11</td>
+    <td bgcolor=white align=center>REF</td>
+    <td width=18 bgcolor=white align=center>12</td>
+    <td bgcolor=white align=center>DESCRIÇÃO</td>
+    <td width=18 bgcolor=white align=center colspan=2>13</td>
+    <td bgcolor=white align=center colspan=8>PREÇOS</td>
+  </tr>
+  <tr class=a>
+    <td bgcolor=white colspan=4>&nbsp;</td>
+    <td bgcolor=white align=center colspan=2>50</td>
+    <td bgcolor=white align=center>100</td>
+    <td bgcolor=white align=center>250</td>
+    <td bgcolor=white align=center>500</td>
+    <td bgcolor=white align=center>1000</td>
+    <td bgcolor=white align=center>2000</td>
+    <td bgcolor=white align=center>5000</td>
+    <td bgcolor=white align=center>10000</td>
+  </tr>
+  {foreach from=$TABELA item=item}
+  <tr class=b>
+    <td bgcolor=white align=center colspan=2>{$item.referencia}</td>
+    <td bgcolor=white colspan=2>{$item.descricao}</td>
+    <td bgcolor=white align=center colspan=2>{if $item.valor.50 > 0}{br_format input=$item.valor.50 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.100 > 0}{br_format input=$item.valor.100 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.250 > 0}{br_format input=$item.valor.250 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.500 > 0}{br_format input=$item.valor.500 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.1000 > 0}{br_format input=$item.valor.1000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.2000 > 0}{br_format input=$item.valor.2000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.5000 > 0}{br_format input=$item.valor.5000 format='money'}{else}-{/if}</td>
+    <td bgcolor=white align=center>{if $item.valor.10000 > 0}{br_format input=$item.valor.10000 format='money'}{else}-{/if}</td>
+  </tr>
+  {/foreach}
+</table>
+<table width=0 height=3 cellspacing=0 cellpadding=0><tr><td></td></tr></table>
+<table width="625" cellpadding=0 cellspacing=0>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>14</td>
+    <td bgcolor=white>&nbsp;Cor .: {$COR}</td>
+    <td width=18 bgcolor=white align=center>15</td>
+    <td bgcolor=white>&nbsp;Gravação .: {$GRAVACAO}</td>
+    <td width=18 bgcolor=white align=center>16</td>
+    <td bgcolor=white>&nbsp;Fotolito .: {br_format input=$FOTOLITO format='money'}</td>
+  </tr>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>17</td>
+    <td bgcolor=white>&nbsp;Cond. Pgto .: {$COND_PGTO}</td>
+    <td width=18 bgcolor=white align=center>18</td>
+    <td bgcolor=white>&nbsp;Prazo Entrega .: {$PRAZO_ENTREGA|upper}</td>
+    <td width=18 bgcolor=white align=center>19</td>
+    <td bgcolor=white>&nbsp;Vendedor .: {$VENDEDOR}</td>
+  </tr>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>20</td>
+    <td bgcolor=white>&nbsp;Aprovação :</td>
+    <td bgcolor=white colspan=4 rowspan=2>&nbsp;</td>
+  </tr>
+  <tr class=a>
+    <td bgcolor=white>&nbsp;</td>
+    <td bgcolor=white colspan=4>&nbsp;</td>
+  </tr>
+</table>
+<table width=0 height=3 cellspacing=0 cellpadding=0><tr><td></td></tr></table>
+<table width="625" cellpadding=0 cellspacing=0>
+  <tr class=a>
+    <td width=18 bgcolor=white align=center>21</td>
+    <td bgcolor=white>&nbsp;CONDIÇÕES GERAIS :</td>
+  </tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;a-) Os impostos estão inclusos no preço.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;b-) O frete para fora da Grande São Paulo será feito através da cláusula FOB.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;c-) O prazo de entrega previsto no campo 18 é médio e poderá sofrer modificações ou atrasos por motivos de força maior ou caso fortuito.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;d-) A arte final e fotolitos quando confeccionados pela CONFIANCE BRINDES terão seus custos cobrados em separado conforme valor aposto no campo 17.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;e-) A produção dos pedidos somente terá início com a aprovação da amostra (campo 21), momento em que será considerado aprovado o presente orçamento/pedido gerando os efeitos legais.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;f-) A aprovação da amostra prevista no campo 20 para os efeitos acima dará através de e-mail, fac-simile ou qualquer outro meio legal de comunicação desde que identificando quem aprovou a amostra.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;g-) A aprovação da amostra deverá conter os dados pessoais de quem aprovou, bem como a identificação da empresa que representa.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;h-) As condições de pagamento são as previstas no campo 17, sendo que o prazo para pagamento começará a valer a partir da data de entrega do produto.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;i-) O cancelamento do orçamento/pedido após a aprovação da amostra, provocará a aplicação de cláusula penal estipulada em 20%(vinte por cento) do valor do pedido, além de responsabilidade em indenização por perdas e danos, com a indenização pelos custos ocorridos com o desenvolvimento de modelos e compra de matéria prima, bem como da mão de obra utilizada.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;j-) Após a aprovação da amostra não serão permitidas retratações/retificações em relação aos campos 11,12,13,14,15,16,17,18 salvo se houver anuência expressa de ambas as partes.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;l-) A validade da presente proposta é de 02 (dois) dias.</td></tr>
+  <tr class=c><td bgcolor=white colspan=2>&nbsp;m-) Fica eleito o foro da cidade de São Paulo, para a dirimação de quaisquer dúvidas, decorrentes do presente pedido.</td></tr>
+</table>
+
+<font class=b><b>Para confirmação do pedido:</b><br>Favor retornar este documento com os dados cadastrais completos (Nome fantasia, Razão social, Endereço completo com CEP, CNPJ,Inscr. Estadual e confirmação de endereços de entrega e cobrança)</font>
+
+</span>
+
+<!--
+<span style='position:absolute;z-index:1;margin-left:10px;margin-top:1100px'>
+<center>
+<p class=a> R DIONISIO DA COSTA, 84, VL MARIANA, SÃO PAULO - 11 5573-6090 / 11 5574-5201 - vendas@confiancebrindes.com.br</b>
+</center>
+</span>
+-->
+
+</body>
+</html>

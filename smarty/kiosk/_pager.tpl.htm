@@ -1,0 +1,24 @@
+{* Smarty | Confiance Brindes :: Paginador *}
+
+{if $PAGES > 0}
+
+  {foreach from=$smarty.get key=key item=item}
+    {if $item|@count > 1}
+      {foreach from=$item key=_key item=_item}
+        {assign var="QUERY_STRING" value="$QUERY_STRING&$key[$_key]=$_item"}
+      {/foreach}
+    {else}
+      {if $key != "page"}
+        {assign var="QUERY_STRING" value="$QUERY_STRING&$key=$item"}
+      {/if}
+    {/if}
+  {/foreach}
+
+  |
+
+  <font class=textoform>Página</font>
+  <select name="pager" OnChange="window.document.location='{$S_BASE_URL}&page='+(this.selectedIndex)+'&{$QUERY_STRING}'">
+  {html_options options=$PAGES selected=$PAGE}
+  </select>
+
+{/if}

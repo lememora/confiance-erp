@@ -1,0 +1,189 @@
+{* Smarty | Confiance Brindes :: Cadastro de Componente *}
+
+{if $ACTION == "tabela"}
+
+  {assign var="tabl_width" value="460"}
+  {assign var="colA_width" value="115"}
+  {assign var="colB_width" value="115"}
+
+{else}
+
+  {assign var="tabl_width" value="650"}
+  {assign var="colA_width" value="100"}
+  {assign var="colB_width" value="225"}
+
+  <table border=0 cellpadding=2 cellspacing=2>
+  <tr>
+  <td>
+  {bigbutton width="75" height="60" image="./images/doc02.gif" label="CRIAR" link="$S_BASE_URL&action=criar"}
+  </td>
+  <td>
+  {bigbutton width="75" height="60" image="./images/PostItNotes.gif" label="LISTAR" link="$S_BASE_URL&action=listar"}
+  </td>
+
+  {if $ACTION != "pesquisar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/Binoculars.gif" label="PESQUISAR" link="$S_BASE_URL&action=pesquisar"}
+    </td>
+  {/if}
+
+  {if $ACTION == "pesquisar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/TelescopeRefracting.gif" label="BUSCAR" onclick="window.document.$VIEW.submit()"}
+    </td>
+  {/if}
+
+  {if $ACTION == "criar" || $ACTION == "alterar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/ZIPBlue.gif" label="GRAVAR" onclick="window.document.$VIEW.submit()"}
+    </td>
+    <td>
+    {bigbutton width="75" height="60" image="./images/calc.gif" label="TABELA" onclick="new_popup('Componente - Tabela','cmptab','$S_BASE_URL&action=tabela&tmp_id=$TMP_ID',130,125,500,400)"}
+    </td>
+  {/if}
+
+  {if $ACTION == "alterar"}
+    <td>
+    {bigbutton width="75" height="60" image="./images/RubyTrashEmpty.gif" label="REMOVER" onclick="redir_confirm('REMOVER O REGISTRO?','$S_BASE_URL&id_componente=`$A_COMPONENTE.id_componente`&action=remover')"}
+    </td>
+  {/if}
+
+  </tr>
+  </table>
+
+{/if}
+
+<table border=0 cellpadding=1 cellspacing=1 width={$tabl_width}>
+  <tr>
+  <td align=left bgcolor="#BBBBBB">
+  <b class=title>&nbsp;{$ACTION|upper}</b>
+  {if $COMPONENTES_TOTAL > 15}{include file="_pager.tpl.htm"}{/if}
+  </td>
+  </tr>
+  <tr>
+  <td>
+
+{if $ACTION == "criar" || $ACTION == "alterar"}
+
+  <form name="{$VIEW}" action="./index.php" method="post">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="{$ACTION}">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+  {if $A_COMPONENTE.id_componente}
+  <input type="hidden" name="componente[id_componente]" value="{$A_COMPONENTE.id_componente}">
+  {/if}
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  {if $A_COMPONENTE.id_componente}
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="__componente[id_componente]" value="{$A_COMPONENTE.id_componente}" class=campoformpeq disabled>
+  </td>
+  </tr>
+  {/if}
+  
+  <tr>
+  <td width={$colA_width} class=textoform>Nome</td>
+  <td width={$colB_width}>
+  <input type="text" name="componente[nome]" value="{$A_COMPONENTE.nome}" class=campoformgde>
+  </td>
+  </tr>
+  
+  </table>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Unidade Medida</td>
+  <td width={$colB_width}>
+  <select name="componente[un_medida]">
+  {html_options options=$A_UN_MEDIDA selected=$A_COMPONENTE.un_medida}
+  </select>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "pesquisar" && $COMPONENTES_TOTAL == 0}
+
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="{$VIEW}">
+  <input type="hidden" name="action" value="buscar">
+
+  <table border=0 cellpadding=0 cellspacing=0>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Código</td>
+  <td width={$colB_width}>
+  <input type="text" name="componente[id_componente]" class=campoformpeq>
+  </td>
+  </tr>
+
+  <tr>
+  <td width={$colA_width} class=textoform>Nome</td>
+  <td width={$colB_width}>
+  <input type="text" name="componente[nome]" class=campoformgde>
+  </td>
+  </tr>
+
+  </table>
+
+{elseif $ACTION == "listar" || $ACTION == "buscar"}
+
+  {if $COMPONENTES_TOTAL > 0}
+    {excel_table width="120,480" field="id_componente,nome" alias="ID,Nome" editfield="id_componente" editlink="$S_BASE_URL&action=alterar" loop=$A_COMPONENTES}
+  {else}
+    <p class=textoform>Nenhum registro encontrado</p>
+  {/if}
+
+{elseif $ACTION == "tabela"}
+
+  {if $A_TABELA}
+  
+  <form name="{$VIEW}" action="./index.php" method="get">
+  <input type="hidden" name="view" value="cadcmp">
+  <input type="hidden" name="action" value="tabela">
+  <input type="hidden" name="tmp_id" value="{$TMP_ID}">
+  
+  <table border=0 cellpadding=0 cellspacing=2>
+  <tr>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>&nbsp;</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD. DE</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>QTD. ATÉ</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>CUSTO UN.</b></td>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>VAL. MAX.</b></td>
+  </tr>
+
+  {foreach from=$A_TABELA key=key item=item}
+  <tr>
+  <td align=center bgcolor="#BBBBBB" class=textoform><b>&nbsp;{math equation="a + b" a=$key b=1}&nbsp;</b></td>
+  {if $item.id != ""}
+  <input type="hidden" name="tabela[{$keu}][id]" value="{$item.id}">
+  {/if}
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][quantidade_de]" value="{$item.quantidade_de}" class=campoformpeq></td>
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][quantidade_ate]" value="{$item.quantidade_ate}" class=campoformpeq></td>
+  <td bgcolor="#EEEEEE" align=center><input type="text" name="tabela[{$key}][custo_un]" value="{$item.custo_un}" class=campoformpeq OnBlur="this.value=brfloat2usfloat(this.value)"></td>
+  <td bgcolor="#EEEEEE" align=center class=textoform>&nbsp;
+  Sim <input type="radio" name="tabela[{$key}][valor_max]" value="S" {if $item.valor_max == "S"}checked{/if}>&nbsp;&nbsp;
+  Não <input type="radio" name="tabela[{$key}][valor_max]" value="N" {if $item.valor_max == "N" || $item.valor_max == ""}checked{/if}>
+  </td>
+  </tr>
+  {/foreach}
+
+  <tr>
+  <td colspan=5 align=right>
+    <input type="button" value="gravar" OnClick="window.document.{$VIEW}.submit();closemeplease('cmptab','{$VIEW}')" class=botaoform>
+  </td>
+  </tr>
+
+  </table>
+  </form>
+
+  {/if}
+
+{/if}
+
+</td>
+</tr>
+</table>

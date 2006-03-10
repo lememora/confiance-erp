@@ -1,0 +1,331 @@
+{* Smarty | Confiance Brindes :: Molde *}
+
+<HTML>
+<HEAD>
+
+  <STYLE>
+  <!--
+  {literal}
+  BODY
+  {
+    font-family: tahoma;
+    font-size: 10pt
+  }
+  A
+  {
+    font-family: tahoma;
+    font-size: 10pt;
+    text-decoration: none
+  }
+  SELECT
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    text-transform: uppercase
+  }
+  TEXTAREA
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    width: 500px;
+    height: 100px;
+    text-transform: uppercase
+  }
+  .title
+  {
+    font-family: tahoma;
+    font-size: 10pt;
+    font-weight: bold;
+  }
+  .mintextoform
+  {
+    font-family: tahoma;
+    font-size: 7pt
+  }
+  .textoform
+  {
+    font-family: tahoma;
+    font-size: 9pt
+  }
+ .campoformmin
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    width: 38px;
+    height: 18px;
+    text-transform: uppercase
+  }
+ .campoformpeq
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    width: 70px;
+    height: 18px;
+    text-transform: uppercase
+  }
+ .campoformmed
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    width: 140px;
+    height: 18px;
+    text-transform: uppercase
+  }
+ .campoformgde
+  {
+    padding-top: 0pt;
+    padding-left: 1pt;
+    padding-right: 0pt;
+    padding-bottom: 0pt;
+    font: 9pt tahoma;
+    width: 210px;
+    height: 18px;
+    text-transform: uppercase
+  }
+  .botaoform
+  {
+    font: 10pt tahoma;
+    font-weight: bold;
+    height: 20px;
+    width: 80px;
+    text-transform: uppercase
+  }
+  {/literal}
+  -->
+  </STYLE>
+
+  <SCRIPT>WinLIKEerrorpage='#';</SCRIPT>
+  <SCRIPT>WinLIKEfilepath="winlike/";</SCRIPT>
+  <SCRIPT>WinLIKEskinpath="winlike_skins/";</SCRIPT>
+  <SCRIPT SRC="winlike/winman/wininit.js"></SCRIPT>
+  <SCRIPT SRC="winlike/winman/winman.js"></SCRIPT>
+  <SCRIPT src="winlike/winman/winxtra.js"></SCRIPT>
+  
+  <SCRIPT> {literal}
+
+  /* WINLIKE SGC FUNCTIONS */
+
+  function close_if_is_open(name)
+  {
+    wlp=recognizeWinLIKE_(parent);
+    if(wlp.WinLIKE.searchwindow(name))
+    {
+      wid=wlp.WinLIKE.searchwindow(name);
+      wlp.WinLIKE.windows[wid].close();
+    }
+  }
+
+  function parent_form_field(name,value,parentname)
+  {
+    {/literal}
+    wlp=recognizeWinLIKE_(parent);
+    wid=wlp.WinLIKE.searchwindow(parentname);
+    fvs = 'wlp.WinLIKE.windows['+wid+'].innerdoc().{$VIEW}.'+name;
+    fvo = eval(fvs);
+    fvo.value = value;
+    {literal}
+  }
+
+  function closemeplease(thisname,parentname)
+  {
+    wlp=recognizeWinLIKE_(parent);
+    wid1=wlp.WinLIKE.searchwindow(thisname);
+    wid2=wlp.WinLIKE.searchwindow(parentname);
+    wlp.WinLIKE.windows[wid2].front();
+    //wlp.WinLIKE.windows[wid1].close();
+    wlp.WinLIKE.windows[wid1].hideshow();
+    wlp.WinLIKE.windows[wid].draw();
+  }
+  
+  function frontmeplease(thisname)
+  {
+    wlp=recognizeWinLIKE_(parent);
+    wid=wlp.WinLIKE.searchwindow(thisname);
+    wlp.WinLIKE.windows[wid].front();
+    wlp.WinLIKE.windows[wid].draw();
+  }
+
+  function new_popup(title,name,url,t,l,w,h)
+  {
+    {/literal}
+    close_if_is_open(name);
+    wlp=recognizeWinLIKE_(parent);
+    win=new wlp.WinLIKE.window(title,t,l,w,h,Math.random(1500,3000));
+    win.SD=false;  win.LD=false;  win.HD=false;
+    win.Vis=true;  win.Siz=false; win.Fro=true; win.Nam=name; win.Adr=url;
+    win.Cls=false; win.Min=false; win.Tit=true; win.Ski='default-popup' // close with button
+    wlp.WinLIKE.addwindow(win);
+    wid=wlp.WinLIKE.searchwindow(name)
+    wlp.WinLIKE.windows[wid].draw();
+    wlp.WinLIKE.windows[wid].front();
+    {literal}
+  }
+  
+  function brfloat2usfloat(fl1)
+  {
+    var chr = '';
+    var fl2 = '';
+    var fl3 = '';
+    var cma = 0;
+
+    if(fl1.length==0) return 0.000;
+
+    for(i=0;i<fl1.length;i++)
+      if(fl1.substr(i,1)==',') cma = 1;
+
+    for(i=0;i<fl1.length;i++)
+    {
+      chr = fl1.substr(i,1);
+      (chr=='.' && cma==1) ? 0 : fl2 += chr;
+    }
+    if(cma==0) return fl2;
+    
+    for(i=0;i<fl2.length;i++)
+    {
+      chr = fl2.substr(i,1);
+      (chr == ',') ? fl3 += '.' : fl3 += chr;
+    }
+    return fl3;
+  }
+  
+  function cshowdiv(divname)
+  {
+    document.getElementById(divname).style.visibility = 'visible';
+  }
+  function chidediv(divname)
+  {
+    document.getElementById(divname).style.visibility = 'hidden';
+  }
+  function cswitchdiv(cond,divname)
+  {
+    if(cond.length>0 && cond!=0) chidediv(divname);
+    else cshowdiv(divname);
+  }
+  
+  function redir_confirm(question,url)
+  {
+    if(confirm(question))
+    {
+      window.document.location=url;
+    }
+  }
+
+  function kbdenter_submit(form)
+  {
+    evt=window.event;
+    if(evt['keyCode']==13) form.submit();
+  }
+
+  /********
+  
+  window.onload = function() { document.onkeydown = register;	document.onkeyup = register; var x = window.document._form_._field_;	x.onkeydown = register;	x.onkeyup = register;}
+
+  function register(e)
+  {
+ 	if (!e) e = window.event;
+	var keyInfo = String.fromCharCode(e.keyCode) + '\n';
+	keyInfo += 'Event: ' + e.type + '\n\n';
+	keyInfo += 'You pressed: ' + String.fromCharCode(e['keyCode']) + ' [Decimal: ' + e['keyCode'] + ']\n';
+	keyInfo += 'ALT: ' + e['altKey'] + '\n';
+	keyInfo += 'CTRL: ' + e['ctrlKey'] + '\n';
+	keyInfo += 'SHIFT: ' + e['shiftKey'] + '\n';
+	keyInfo += 'REPEAT: ' + e['repeat'] + '\n';
+	keyInfo += 'WHICH: ' + e['which'];
+	document.forms[1].log.value = keyInfo;
+ }
+
+ *********/
+ 
+ function printpage()
+ {
+     window.print();
+     return false;
+ }
+
+  {/literal} </SCRIPT>
+  
+</HEAD>
+
+{* MODO COM EXIBIÇÃO DO MENÚ *}
+{if $SHOW_MENU == "1"}
+
+<BODY onLoad="WinLIKE.init()" onResize="WinLIKE.resizewindows()" bgcolor="#3A6EA5">
+
+<SCRIPT> {literal}
+
+WinLIKE.definewindows=newWindow;
+
+var wPosX  = 10;
+var wPosY  = 60;
+var wSizeX = 760;
+var wSizeY = 500;
+var wID    = 50;
+
+function newWindow()
+{
+  {/literal}
+  {* ========================================================
+   * JANELAS (GERADO PELO SMARTY). EXEMPLO:
+   * ========================================================
+   * var j=new WinLIKE.window('Janela1001',0,0,640,480,1001);
+   * j.SD=false;
+   * j.LD=false;
+   * j.HD=false;
+   * j.Vis=false;
+   * j.Siz=false;
+   * j.Fro=true;
+   * j.Nam="target1001";
+   * WinLIKE.addwindow(j);
+   *}
+  {foreach from=$A_VIEW_MENU key=s_menu item=a_view}
+  {section name=v loop=$a_view}
+  {assign var="s_view" value=$a_view[v]}
+
+  wID++;
+  var j=new WinLIKE.window("{$s_menu} - {$A_VIEW[$s_view]}",wPosX,wPosY,wSizeX,wSizeY,wID);
+  j.SD=false;  j.LD=false;  j.HD=false; j.Ski='default-popup';
+  j.Vis=false; j.Siz=false; j.Fro=true; j.Nam="{$s_view}";
+  WinLIKE.addwindow(j);
+    
+  {/section}
+  {/foreach}
+  {literal}
+}
+
+{/literal} </SCRIPT>
+
+{include file="_menu_.tpl.htm"}
+
+</BODY>
+</HTML>
+
+{* MODO SEM EXIBIÇÃO DO MENÚ *}
+{else}
+
+<BODY bgcolor="#EEEEEE" alink=black vlink=black link=black padding=0 spacing=0>
+
+{if $VIEW_FILE|count_characters eq 0 || $VIEW_FILE eq "_molde.tpl.htm"}
+  {include file="_main_.tpl.htm"}
+{else}
+  {include file=$VIEW_FILE}
+{/if}
+
+</BODY>
+</HTML>
+
+{/if}

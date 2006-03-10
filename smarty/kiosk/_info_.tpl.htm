@@ -1,0 +1,33 @@
+{* Smarty | Confiance Brindes :: Informação *}
+
+<center>
+
+<br>
+<table border=0 cellspacing=10><tr><td valign=middle>
+<img src="./images/info.gif">
+</td><td valin=middle>
+<font class=titulo>{$A_VIEW._info}</font>
+</td></tr></table>
+<br><br>
+
+{if $smarty.get.INFO != ""}
+  {$smarty.get.INFO}<br>
+{elseif $smarty.post.INFO != ""}
+  {$smarty.post.INFO}<br>
+{/if}
+
+{if $INFO != ""}
+  {$INFO}<br>
+{/if}
+
+<br>
+
+<table border=0 width="100%">
+<tr><td align=right valign=middle>
+<a href="{$S_BASE_URL}&action=criar"> CONTINUAR </a>
+</td><td>
+<a href="{$S_BASE_URL}&action=criar"> <img src="./images/cy_r_arr.gif" border=0> </a>
+</td></tr>
+</table>
+
+</center>
